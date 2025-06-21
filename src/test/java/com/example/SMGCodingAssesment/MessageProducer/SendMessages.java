@@ -25,7 +25,7 @@ public class SendMessages {
     public KafkaTemplate<String, String> kafkaTemplate;
 
     @Test
-    public void sendCreateKafkaMessage() {
+    public void  sendCreateKafkaMessage() {
         Car car = Car.builder().
                 price(10_000.0).
                 brand("Acalor").
@@ -49,7 +49,7 @@ public class SendMessages {
     @Test
     public void sendUpdateKafkaMessage() {
         Car car = Car.builder().
-                id("NyEWkpcBtgkrRuDgZYpz"). // When you save the product through the first test copy paste from the logs the id
+                id("XSFNkpcBtgkrRuDgmYrr"). // When you save the product through the first test copy paste from the logs the id
                 //  It will look something like this Car product is saved in elastic with id NyEWkpcBtgkrRuDgZYpz
                 price(10_000.0*23124). // lets pretend that this is a buggati from the future ;D
                 brand("Acalor").
@@ -69,11 +69,11 @@ public class SendMessages {
 
     }
 
-    // This updates the price
+    // This Deletes from elastic cache
     @Test
     public void sendDeleteKafkaMessage() {
         Car car = Car.builder().
-                id("NyEWkpcBtgkrRuDgZYpz"). // Basically we care only for id here
+                id("XSFNkpcBtgkrRuDgmYrr"). // Basically we care only for id here
                 build();
 
         CarEvent carEvent = CarEvent.builder().

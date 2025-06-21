@@ -5,6 +5,9 @@ import com.example.SMGCodingAssesment.elastic.repository.CarRepository;
 import com.example.SMGCodingAssesment.kafka.events.CarEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -15,6 +18,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CarService {
     private final CarRepository carRepository;
+
+    @Cacheable(value = "cars", key = "#id")
     public Car getCarById(String id) {
         return carRepository.findById(id).orElse(null);
     }
@@ -31,13 +36,14 @@ public class CarService {
         log.info("Car product is saved in elastic with id {}", save.getId());
     }
 
-    public void updateCar(CarEvent carEvent) {
+    @CachePut(value = "cars", key = "#carEvent.car.id")
+    public Car updateCar(CarEvent carEvent) {
         String id = carEvent.getCar().getId();
         Optional<Car> byId = carRepository.findById(id);
         if (byId.isEmpty()) {
-            log.info("Message with key {} and timestmap {} was sent for update but car with id {} was not found in database.",
+            log.info("Message with key {} and timestamp {} was sent for update but car with id {} was not found in database.",
                     carEvent.getMsgKey(), carEvent.getTimestamp(), carEvent.getCar().getId());
-            return;
+            return null;
         }
 
         Car updatedCar = carEvent.getCar();
@@ -48,9 +54,10 @@ public class CarService {
         oldCar.setBrand(updatedCar.getBrand());
         oldCar.setPrice(updatedCar.getPrice());
 
-        carRepository.save(oldCar);
+        return carRepository.save(oldCar);
     }
 
+    @CacheEvict(value = "cars", key = "#carEvent.car.id")
     public void delete(CarEvent carEvent) {
         String id = carEvent.getCar().getId();
         Optional<Car> byId = carRepository.findById(id);
