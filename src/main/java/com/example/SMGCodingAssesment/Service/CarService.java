@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -18,7 +20,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CarService {
     private final CarRepository carRepository;
-
+    // Demonstration is done on id for caching
     @Cacheable(value = "cars", key = "#id")
     public Car getCarById(String id) {
         return carRepository.findById(id).orElse(null);
@@ -69,4 +71,37 @@ public class CarService {
         carRepository.deleteById(id);
     }
 
+
+    // This is the part how we would implement searching by any relevant field
+    // We can also add aditional caches
+
+    public Page<Car> getAllCars(Pageable pageable) {
+        return carRepository.findAll(pageable);
+    }
+
+    // Foreexample we can create another cache here
+    // @CachePut(value = "carsByBrand", key = "#brand")
+    // But honestly i am not sure how to pair it with page
+    public Page<Car> getAllByBrand(Pageable pageable, String brand) {
+        return carRepository.findByBrandIgnoringCase(pageable, brand);
+    }
+
+    public Page<Car> getAllByYear(Pageable pageable, Integer year) {
+        return carRepository.findByYear(pageable, year);
+    }
+
+    // Other option is this
+    // For creating specification to filter everything and pageing together
+    /*
+    public static Specification<Car> hasMake(String make) {
+        return (root, query, builder) ->
+                builder.equal(builder.lower(root.get("make")), make.toLowerCase());
+    }
+
+    public static Specification<Car> hasYear(Integer year) {
+        return (root, query, builder) ->
+                builder.equal(root.get("year"), year);
+    }
+
+     */
 }

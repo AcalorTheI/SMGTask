@@ -24,6 +24,7 @@ public class SendMessages {
     @Autowired
     public KafkaTemplate<String, String> kafkaTemplate;
 
+
     @Test
     public void  sendCreateKafkaMessage() {
         Car car = Car.builder().

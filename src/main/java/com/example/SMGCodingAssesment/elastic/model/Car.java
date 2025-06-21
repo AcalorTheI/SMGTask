@@ -19,7 +19,6 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 @Builder
 @Document(indexName = "cars")
 public class Car {
-    // This will be UUID v4
     @Id
     private String id;
     @Field(type = FieldType.Text, analyzer = "standard")

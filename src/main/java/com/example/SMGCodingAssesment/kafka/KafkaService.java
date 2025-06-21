@@ -18,6 +18,10 @@ public class KafkaService {
 
     @KafkaListener(topics = "${topic.name}", groupId = "car-event-consumer-group")
     public void listen(String event) {
+        if (event.contains("fail")) {
+            throw new RuntimeException("Some error");
+        }
+
         CarEvent carEvent = gson.fromJson(event, CarEvent.class);
         log.info("Received car event: {} | Car: {} with timestamp: {} and type: {}", carEvent.getEventType(),
                 carEvent.getCar().getBrand() + " " + carEvent.getCar().getModel(), carEvent.getTimestamp(),
@@ -30,6 +34,12 @@ public class KafkaService {
             default -> throw new RuntimeException("Unrecognized event type: " + carEvent.getEventType());
         }
 
+    }
+    @KafkaListener(topics = "${topic.name}.DLT", groupId = "dlt-group")
+    public void handleDlt(String message) {
+        System.out.println("Handling message in DLT: " + message);
+        // We can do something here either log and save the data from the message or send them
+        // again to the topic
     }
 
 
