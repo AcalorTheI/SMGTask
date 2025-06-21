@@ -27,7 +27,8 @@ public class CarService {
                 price(carEvent.getCar().getPrice()).
                 build();
 
-        carRepository.save(newCar);
+        Car save = carRepository.save(newCar);
+        log.info("Car product is saved in elastic with id {}", save.getId());
     }
 
     public void updateCar(CarEvent carEvent) {

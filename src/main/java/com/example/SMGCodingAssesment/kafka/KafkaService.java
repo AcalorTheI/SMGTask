@@ -4,6 +4,7 @@ import com.example.SMGCodingAssesment.Service.CarService;
 import com.example.SMGCodingAssesment.kafka.events.CarEvent;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,7 @@ public class KafkaService {
     private final Gson gson;
     private final CarService carService;
 
-    @KafkaListener(topics = "car-events", groupId = "car-event-consumer-group")
+    @KafkaListener(topics = "${topic.name}", groupId = "car-event-consumer-group")
     public void listen(String event) {
         CarEvent carEvent = gson.fromJson(event, CarEvent.class);
         log.info("Received car event: {} | Car: {} with timestamp: {} and type: {}", carEvent.getEventType(),
