@@ -35,9 +35,9 @@ public class KafkaService {
         }
 
     }
-    @KafkaListener(topics = "${topic.name}.DLT", groupId = "dlt-group")
+    @KafkaListener(topics = "${topic.name}.DLQ", groupId = "dlt-group")
     public void handleDlt(String message) {
-        System.out.println("Handling message in DLT: " + message);
+        System.out.println("Handling message in DLQ: " + message);
         // We can do something here either log and save the data from the message or send them
         // again to the topic
     }
